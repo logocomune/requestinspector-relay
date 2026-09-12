@@ -1,0 +1,21 @@
+FROM alpine:3.23 AS config
+
+RUN mkdir -p /data && printf 'base: {}\nui_overrides: {}\n' > /data/reqrelay.yaml
+
+FROM gcr.io/distroless/static-debian12
+
+COPY reqrelay /reqrelay
+
+VOLUME ["/data"]
+
+ENV REQRELAY_MANAGEMENT_LISTEN=0.0.0.0:8080
+ENV REQRELAY_TRAFFIC_LISTEN=0.0.0.0:8081
+ENV REQRELAY_CONFIG=/data/reqrelay.yaml
+ENV REQRELAY_SQLITE_PATH=/data/reqrelay.db
+
+COPY --from=config /data/reqrelay.yaml /data/reqrelay.yaml
+
+EXPOSE 8080
+EXPOSE 8081
+
+ENTRYPOINT ["/reqrelay"]

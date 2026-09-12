@@ -1,0 +1,86 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+@theme {
+  --color-page: var(--rl-page);
+  --color-surface: var(--rl-surface);
+  --color-surface-muted: var(--rl-surface-muted);
+  --color-text: var(--rl-text);
+  --color-text-muted: var(--rl-text-muted);
+  --color-link: var(--rl-link);
+  --color-border: var(--rl-border);
+  --color-control: var(--rl-control);
+  --color-action: var(--rl-action);
+  --color-focus: var(--rl-focus);
+  --color-error: var(--rl-error);
+  --color-kpi-bg: var(--rl-kpi-bg);
+  --color-kpi-text: var(--rl-kpi-text);
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+:root,
+:root[data-theme='light'] {
+  color-scheme: light;
+  --rl-page: #f8fafc;
+  --rl-surface: #ffffff;
+  --rl-surface-muted: #f1f5f9;
+  --rl-text: #0f172a;
+  --rl-text-muted: #475569;
+  --rl-link: #1d4ed8;
+  --rl-border: #cbd5e1;
+  --rl-control: #64748b;
+  --rl-action: #1d4ed8;
+  --rl-focus: #1d4ed8;
+  --rl-error: #b91c1c;
+  --rl-kpi-bg: #ffedd5;
+  --rl-kpi-text: #c2410c;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --rl-page: #0f172a;
+  --rl-surface: #1e293b;
+  --rl-surface-muted: #334155;
+  --rl-text: #f8fafc;
+  --rl-text-muted: #cbd5e1;
+  --rl-link: #93c5fd;
+  --rl-border: #334155;
+  --rl-control: #94a3b8;
+  --rl-action: #2563eb;
+  --rl-focus: #fbbf24;
+  --rl-error: #fca5a5;
+  --rl-kpi-bg: #431407;
+  --rl-kpi-text: #fdba74;
+}
+
+html { min-width: 320px; background: var(--rl-page); }
+body { margin: 0; min-height: 100vh; background: var(--rl-page); color: var(--rl-text); font-size: 16px; line-height: 1.5; }
+button, input, select { font: inherit; }
+:focus-visible { outline: 2px solid var(--rl-focus); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
+
+/* 44px Icon Container for Section / Card Headers */
+.feature-icon-wrap {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+}
+
+/* 48px Icon Container for Metric / KPI Cards */
+.stat-icon-wrap {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+}
+
+/* Terminal / Code Snippet Dark Container */
+.terminal-block {
+  background-color: #0f172a;
+  color: #e2e8f0;
+  border-radius: 0.75rem;
+  border: 1px solid #1e293b;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  padding: 1rem 1.25rem;
+  overflow-x: auto;
+}

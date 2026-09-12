@@ -1,0 +1,27 @@
+{
+  "exchange": {
+    "id": "udp-1",
+    "transport": "udp",
+    "mode": "capture",
+    "config_revision": 1,
+    "revision": 2,
+    "state": "completed",
+    "started_at": "2026-09-08T12:00:00Z",
+    "completed_at": "2026-09-08T12:00:00.001Z",
+    "duration_ns": 1000000,
+    "datagram": {
+      "source_address": "127.0.0.1:5000",
+      "local_address": "127.0.0.1:9000",
+      "accepted_bytes": 3,
+      "payload_complete": true,
+      "preview_truncated": false,
+      "delivery": {
+        "result": "not_sent",
+        "sent_bytes": 0,
+        "truncated": false
+      }
+    }
+  },
+  "datagram_available": true,
+  "response_available": false
+}

@@ -1,0 +1,81 @@
+{
+  "exchange": {
+    "id": "01K4W9M8QAZ6JY8M5K3F6P2R1T",
+    "transport": "http",
+    "mode": "proxy",
+    "config_revision": 2,
+    "revision": 4,
+    "state": "completed",
+    "started_at": "2026-09-07T09:59:59Z",
+    "completed_at": "2026-09-07T10:00:00Z",
+    "duration_ns": 1000000000,
+    "request": {
+      "method": "POST",
+      "scheme": "http",
+      "protocol": "HTTP/1.1",
+      "host": "127.0.0.1:8081",
+      "request_target": "/orders?source=fixture",
+      "path": "/orders",
+      "raw_query": "source=fixture",
+      "remote_address": "127.0.0.1:50000",
+      "headers": {
+        "Content-Type": ["application/json"],
+        "X-Trace": ["one", "two"]
+      },
+      "content_type": "application/json",
+      "observed_body_bytes": 7,
+      "body_complete": true,
+      "header_bytes_estimate": 96,
+      "preview": "eyJpZCI6MX0=",
+      "preview_truncated": false,
+      "decoded_preview_bytes": 7,
+      "preview_error": "example preview error"
+    },
+    "response": {
+      "status": 201,
+      "headers": {
+        "Content-Type": ["application/json"],
+        "Set-Cookie": ["a=1", "b=2"]
+      },
+      "observed_body_bytes": 11,
+      "body_complete": true,
+      "header_bytes_estimate": 104,
+      "origin": "upstream",
+      "preview": "eyJvayI6dHJ1ZX0=",
+      "preview_truncated": false,
+      "decoded_preview_bytes": 11,
+      "preview_error": "example response preview error"
+    },
+    "effective_upstream": "https://upstream.example/base/orders?source=fixture",
+    "upstream_response_header_bytes_estimate": 104,
+    "upstream_observed_response_body_bytes": 11,
+    "proxy_timing": {
+      "upstream_started_at": "2026-09-07T09:59:59.1Z",
+      "request_written_at": "2026-09-07T09:59:59.2Z",
+      "first_response_byte_at": "2026-09-07T09:59:59.5Z",
+      "response_captured_at": "2026-09-07T09:59:59.8Z",
+      "downstream_completed_at": "2026-09-07T10:00:00Z",
+      "upstream_dispatch_duration_us": 100000,
+      "upstream_wait_duration_us": 300000,
+      "upstream_receive_duration_us": 300000,
+      "upstream_total_duration_us": 700000,
+      "downstream_write_duration_us": 200000,
+      "proxy_total_duration_us": 900000
+    },
+    "error": {
+      "category": "example_error",
+      "message": "Example error"
+    },
+    "downstream_delivery": {
+      "status": 201,
+      "body_bytes": 11,
+      "error": "example downstream error"
+    },
+    "persistence": {
+      "state": "persisted",
+      "error": "example persistence error"
+    }
+  },
+  "request_available": true,
+  "response_available": true
+}

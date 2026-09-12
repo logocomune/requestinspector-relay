@@ -1,0 +1,6 @@
+{
+  "schema_version": 1,
+  "reason": "replay_gap",
+  "event_cursor": "42",
+  "items": []
+}

@@ -1,0 +1,206 @@
+name: Backend
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+          cache: true
+      - run: npm ci
+      - run: npm run check
+      - run: npm run check:credits
+      - run: npm test
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+
+  native-tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+          cache: true
+      - run: npm ci --prefix web
+      - run: npm --prefix web run build
+      - run: go test ./...
+
+  race-and-vet:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+          cache: true
+      - run: npm ci --prefix web
+      - run: npm --prefix web run build
+      - run: go test -race ./...
+      - run: go vet ./...
+
+  cross-build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: linux-amd64
+            goos: linux
+            goarch: amd64
+            goarm: ""
+            output: reqrelay-linux-amd64
+          - name: linux-armv7
+            goos: linux
+            goarch: arm
+            goarm: "7"
+            output: reqrelay-linux-armv7
+          - name: linux-arm64
+            goos: linux
+            goarch: arm64
+            goarm: ""
+            output: reqrelay-linux-arm64
+          - name: darwin-amd64
+            goos: darwin
+            goarch: amd64
+            goarm: ""
+            output: reqrelay-darwin-amd64
+          - name: darwin-arm64
+            goos: darwin
+            goarch: arm64
+            goarm: ""
+            output: reqrelay-darwin-arm64
+          - name: windows-amd64
+            goos: windows
+            goarch: amd64
+            goarm: ""
+            output: reqrelay-windows-amd64.exe
+          - name: windows-arm64
+            goos: windows
+            goarch: arm64
+            goarm: ""
+            output: reqrelay-windows-arm64.exe
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+          cache: true
+      - run: npm ci --prefix web
+      - run: npm --prefix web run build
+      - name: Build ${{ matrix.name }}
+        env:
+          CGO_ENABLED: "0"
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          GOARM: ${{ matrix.goarm }}
+          OUTPUT: ${{ matrix.output }}
+        run: go build -trimpath -o "${RUNNER_TEMP}/${OUTPUT}" ./cmd/reqrelay
+
+  arm-smoke:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: linux/arm/v7
+            goarch: arm
+            goarm: "7"
+            suffix: armv7
+          - platform: linux/arm64/v8
+            goarch: arm64
+            goarm: ""
+            suffix: arm64
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+          cache: true
+      - run: npm ci --prefix web
+      - run: npm --prefix web run build
+      - uses: docker/setup-qemu-action@v4
+      - name: Compile application smoke tests
+        env:
+          CGO_ENABLED: "0"
+          GOOS: linux
+          GOARCH: ${{ matrix.goarch }}
+          GOARM: ${{ matrix.goarm }}
+        run: go test -c -o "${RUNNER_TEMP}/reqrelay-app-${{ matrix.suffix }}.test" ./internal/app
+      - name: Run application smoke tests under emulation
+        env:
+          PLATFORM: ${{ matrix.platform }}
+          TEST_BINARY: reqrelay-app-${{ matrix.suffix }}.test
+        run: docker run --rm --platform "${PLATFORM}" -v "${RUNNER_TEMP}:/smoke:ro" alpine:3.22 "/smoke/${TEST_BINARY}"
+
+  fuzz-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+          cache: true
+      - run: npm ci --prefix web
+      - run: npm --prefix web run build
+      - run: go test ./internal/config -run '^$' -fuzz '^FuzzParseDocument$' -fuzztime 3s
+      - run: go test ./internal/config -run '^$' -fuzz '^FuzzUDPConfigurationValidation$' -fuzztime 3s
+      - run: go test ./internal/capture -run '^$' -fuzz '^FuzzCaptureHandler$' -fuzztime 3s
+      - run: go test ./internal/capture -run '^$' -fuzz '^FuzzReadBody$' -fuzztime 3s
+      - run: go test ./internal/capture -run '^$' -fuzz '^FuzzUDPDatagramCloneAndJSON$' -fuzztime 3s
+      - run: go test ./internal/app -run '^$' -fuzz '^FuzzUDPReplyBudgetStateTransitions$' -fuzztime 3s
+      - run: go test ./internal/httpapi -run '^$' -fuzz '^FuzzDecodeCursor$' -fuzztime 3s
+      - run: go test ./internal/httpapi -run '^$' -fuzz '^FuzzParseRange$' -fuzztime 3s
+      - run: go test ./internal/proxy -run '^$' -fuzz '^FuzzComposeURL$' -fuzztime 3s
+      - run: go test ./internal/proxy -run '^$' -fuzz '^FuzzInspect$' -fuzztime 3s
+      - run: go test ./internal/proxy -run '^$' -fuzz '^FuzzInspectGzipRoundTrip$' -fuzztime 3s
+      - run: go test ./internal/proxy -run '^$' -fuzz '^FuzzReadResponseBody$' -fuzztime 3s
+      - run: go test ./internal/sqlite -run '^$' -fuzz '^FuzzDecodeExchange$' -fuzztime 3s
+      - run: go test ./internal/sqlite -run '^$' -fuzz '^FuzzUDPDatagramBodyRoundTrip$' -fuzztime 3s

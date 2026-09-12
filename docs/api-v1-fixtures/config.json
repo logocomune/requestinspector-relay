@@ -1,0 +1,66 @@
+{
+  "effective": {
+    "listeners": {
+      "management": "127.0.0.1:8080",
+      "traffic": "0.0.0.0:8081"
+    },
+    "mode": "proxy",
+    "upstream": {
+      "url": "https://upstream.example/base",
+      "timeout": 30000000000
+    },
+    "capture_response": {
+      "status": 200,
+      "headers": {
+        "Content-Type": ["application/json"]
+      },
+      "body": "{\"ok\":true}"
+    },
+    "cors": {
+      "enabled": false
+    },
+    "limits": {
+      "request_body_bytes": 1048576,
+      "response_body_bytes": 1048576,
+      "request_header_bytes": 65536,
+      "response_header_bytes": 65536,
+      "concurrent_exchanges": 128
+    },
+    "preview": {
+      "enabled": true,
+      "bytes": 16384
+    },
+    "history": {
+      "max_exchanges": 100
+    },
+    "storage": {
+      "mode": "sqlite",
+      "sqlite_path": "/var/lib/requestinspector-relay/reqrelay.db",
+      "retention_days": 30
+    },
+    "authentication": {
+      "session_ttl": 86400000000000
+    },
+    "udp": {
+      "enabled": false,
+      "listen": "0.0.0.0:12050",
+      "mode": "capture",
+      "upstream": "",
+      "max_datagram_bytes": 65507,
+      "max_sessions": 1024,
+      "session_ttl": 30000000000,
+      "capture_response": "",
+      "max_replies_per_second": 100,
+      "max_reply_bytes_per_second": 1048576
+    },
+    "shutdown_timeout": 10000000000
+  },
+  "config_path": "/etc/requestinspector-relay/reqrelay.yaml",
+  "origins": {
+    "mode": "file",
+    "upstream.url": "ui"
+  },
+  "overrides": ["upstream.url"],
+  "pending_restart": [],
+  "revision": 2
+}

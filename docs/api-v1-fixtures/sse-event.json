@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "event_id": "43",
+  "timestamp": "2026-09-07T10:00:00Z",
+  "type": "request.completed",
+  "exchange_id": "01K4W9M8QAZ6JY8M5K3F6P2R1T",
+  "revision": 2,
+  "data": {
+    "request_header_bytes_estimate": 96,
+    "request_body_bytes": 7,
+    "preview": "eyJpZCI6MX0=",
+    "preview_truncated": false
+  }
+}

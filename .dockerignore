@@ -1,0 +1,8 @@
+.git
+.github
+dist
+web/node_modules
+web/.svelte-kit
+web/build
+requestinspector-frontend
+meshcom-client

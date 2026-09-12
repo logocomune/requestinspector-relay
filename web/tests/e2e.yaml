@@ -1,0 +1,46 @@
+base:
+  listeners:
+    management: 127.0.0.1:4173
+    traffic: 127.0.0.1:4174
+  mode: capture
+  upstream:
+    url: http://127.0.0.1:4175
+    timeout: 5s
+  capture_response:
+    status: 200
+    headers:
+      Content-Type:
+        - application/json
+    body: '{"captured":true}'
+  limits:
+    request_body_bytes: 1048576
+    response_body_bytes: 1048576
+    request_header_bytes: 65536
+    response_header_bytes: 65536
+    concurrent_exchanges: 8
+  preview:
+    enabled: true
+    bytes: 32
+  history:
+    max_exchanges: 100
+  storage:
+    mode: sqlite
+    sqlite_path: /tmp/reqrelay-phase10-e2e.db
+    retention_days: 0
+  authentication:
+    username: ""
+    password: ""
+    session_ttl: 1h
+  udp:
+    enabled: true
+    listen: 127.0.0.1:4176
+    mode: capture
+    upstream: ""
+    max_datagram_bytes: 65507
+    max_sessions: 1024
+    session_ttl: 30s
+    capture_response: capture-reply
+    max_replies_per_second: 100
+    max_reply_bytes_per_second: 1048576
+  shutdown_timeout: 5s
+ui_overrides: {}

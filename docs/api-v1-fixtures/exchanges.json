@@ -1,0 +1,27 @@
+{
+  "items": [
+    {
+      "id": "01K4W9M8QAZ6JY8M5K3F6P2R1T",
+      "mode": "proxy",
+      "state": "completed",
+      "revision": 4,
+      "config_revision": 2,
+      "started_at": "2026-09-07T09:59:59Z",
+      "completed_at": "2026-09-07T10:00:00Z",
+      "method": "POST",
+      "path": "/orders",
+      "request_body_bytes": 7,
+      "response_body_bytes": 11,
+      "response_status": 201,
+      "duration_ns": 1000000000,
+      "request_preview": "eyJpZCI6MX0=",
+      "preview_truncated": false,
+      "error": {
+        "category": "example_error",
+        "message": "Example error"
+      }
+    }
+  ],
+  "next_cursor": "MTc4ODc3NTIwMDAwMDAwMDAwMHwwMUs0VzlNOFFBWjZKWThNNUszRjZQMlIxVA",
+  "has_more": true
+}
